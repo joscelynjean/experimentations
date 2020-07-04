@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1ypb85z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.3">
+  <bpmn:process id="uuid-registering" name="UUID registering" isExecutable="true">
+    <bpmn:startEvent id="Event_0trr16m" name="Register UUID request">
+      <bpmn:outgoing>Flow_09muyby</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_09muyby" sourceRef="Event_0trr16m" targetRef="Activity_01bzbeu" />
+    <bpmn:serviceTask id="Activity_01bzbeu" name="Register UUID" camunda:type="external" camunda:topic="register_uuid">
+      <bpmn:incoming>Flow_09muyby</bpmn:incoming>
+      <bpmn:outgoing>Flow_12ibhxj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1jo7sqd" name="UUID registered">
+      <bpmn:incoming>Flow_12ibhxj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_12ibhxj" sourceRef="Activity_01bzbeu" targetRef="Event_1jo7sqd" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="uuid-registering">
+      <bpmndi:BPMNEdge id="Flow_09muyby_di" bpmnElement="Flow_09muyby">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="430" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12ibhxj_di" bpmnElement="Flow_12ibhxj">
+        <di:waypoint x="530" y="120" />
+        <di:waypoint x="742" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0trr16m_di" bpmnElement="Event_0trr16m">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="145" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d19q8h_di" bpmnElement="Activity_01bzbeu">
+        <dc:Bounds x="430" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1jo7sqd_di" bpmnElement="Event_1jo7sqd">
+        <dc:Bounds x="742" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="721" y="145" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,12 @@
+POST https://nginx.local/engine-rest/process-definition/key/uuid-registering/start
+Authorization: Basic demo demo
+content-type: application/json
+
+{
+	"variables": {
+		"uuid": {
+			"value":"{{$guid}}",
+			"type":"string"
+		}
+	}
+}

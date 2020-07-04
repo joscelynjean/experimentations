@@ -1,0 +1,87 @@
+version: "3.1"
+
+services:
+  # worker-db:
+  #   image: mongo:3.6.14
+  #   #ports:
+  #   #  - 27017:27017
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: root
+  # worker:
+  #   build:
+  #     context: worker
+  #   image: jj-concurrency-camunda-worker
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 6
+  # camunda1:
+  #   build: ./camunda
+  #   ports:
+  #     - 8080:8080
+  #   depends_on:
+  #     - camunda-db
+  #   links:
+  #     - camunda-db
+  camunda1:
+    build: ./camunda
+    volumes:
+      - ./camunda/docker/conf/server.xml:/camunda/conf/server.xml:ro
+      - ./camunda/docker/conf/web.xml:/camunda/webapps/engine-rest/WEB-INF/web.xml:ro
+      - ./camunda/docker/conf/bpm-platform.xml:/camunda/conf/bpm-platform.xml:ro
+      - ./camunda/docker/lib/camunda-json-logging-tomcat-7.12.0-1.0.jar:/camunda/lib/camunda-json-logging-tomcat-7.12.0-1.0.jar:ro
+      - ./camunda/docker/conf/logback/logback.xml:/camunda/conf/logback/logback.xml:ro
+      - ./camunda/docker/conf/logging.properties:/camunda/conf/logging.properties:ro
+      - ./camunda/docker/bin/setenv.sh:/camunda/bin/setenv.sh:ro
+    environment:
+      - WAIT_FOR=camunda-db:5432
+      - WAIT_FOR_TIMEOUT=60
+    ports:
+      - 8080:8080
+    depends_on:
+      - camunda-db
+    links:
+      - camunda-db
+  camunda2:
+    build: ./camunda
+    volumes:
+      - ./camunda/docker/conf/server.xml:/camunda/conf/server.xml:ro
+      - ./camunda/docker/conf/web.xml:/camunda/webapps/engine-rest/WEB-INF/web.xml:ro
+      - ./camunda/docker/conf/bpm-platform.xml:/camunda/conf/bpm-platform.xml:ro
+      - ./camunda/docker/lib/camunda-json-logging-tomcat-7.12.0-1.0.jar:/camunda/lib/camunda-json-logging-tomcat-7.12.0-1.0.jar:ro
+      - ./camunda/docker/conf/logback/logback.xml:/camunda/conf/logback/logback.xml:ro
+      - ./camunda/docker/conf/logging.properties:/camunda/conf/logging.properties:ro
+      - ./camunda/docker/bin/setenv.sh:/camunda/bin/setenv.sh:ro
+    environment:
+      - WAIT_FOR=camunda-db:5432
+      - WAIT_FOR_TIMEOUT=60
+    ports:
+      - 8081:8080
+    depends_on:
+      - camunda-db
+      - camunda1
+    links:
+      - camunda-db
+  camunda-db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+  nginx:
+    # image: nginx
+    build: ./nginx
+    environment:
+      - LD_PRELOAD=/usr/local/lib/libsslkeylog.so
+      - SSLKEYLOGFILE=/etc/nginx/ssl-key.logs
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/nginx:/etc/nginx
+    command: [nginx-debug, "-g", "daemon off;"]
+    links:
+      - camunda1
+      - camunda2
+    depends_on:
+      - camunda1
+      - camunda2

@@ -1,0 +1,5 @@
+DB_DRIVER=org.postgresql.Driver
+DB_URL=jdbc:postgresql://camunda-db:5432/postgres
+DB_USERNAME=postgres
+DB_PASSWORD=example
+WAIT_FOR=camunda-db:5432
