@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "camunda-external-task-client-js": "^2.0.0"
+    "camunda-external-task-client-js": "^2.0.0",
+    "mongodb": "^3.5.9"
   }
 }

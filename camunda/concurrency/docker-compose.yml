@@ -1,28 +1,27 @@
 version: "3.1"
 
 services:
-  # worker-db:
-  #   image: mongo:3.6.14
-  #   #ports:
-  #   #  - 27017:27017
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: root
-  #     MONGO_INITDB_ROOT_PASSWORD: root
+  worker-db:
+    image: mongo:3.6.14
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ./mongodb/init.js:/docker-entrypoint-initdb.d/init.js:ro
   # worker:
-  #   build:
-  #     context: worker
-  #   image: jj-concurrency-camunda-worker
+  #   build: ./worker
   #   deploy:
   #     mode: replicated
   #     replicas: 6
-  # camunda1:
-  #   build: ./camunda
-  #   ports:
-  #     - 8080:8080
   #   depends_on:
-  #     - camunda-db
+  #     - camunda1
+  #     - camunda2
+  #     - worker-db
   #   links:
-  #     - camunda-db
+  #     - nginx
+  #     - worker-db
   camunda1:
     build: ./camunda
     volumes:
