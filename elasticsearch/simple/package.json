@@ -1,0 +1,14 @@
+{
+  "name": "simple",
+  "version": "1.0.0",
+  "description": "``` brew install jq ```",
+  "main": "index.js",
+  "scripts": {
+    "import": "node init.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}

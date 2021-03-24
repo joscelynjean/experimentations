@@ -1,0 +1,204 @@
+# Base URL based on compose file
+@baseUrl = http://localhost:9200
+# Name of the index
+@myIndex = bylaws
+
+
+### Check for plugin installed
+GET {{baseUrl}}/_cat/plugins
+
+
+### Create custom pipeline
+PUT {{baseUrl}}/_ingest/pipeline/my-custom-pipeline
+Content-Type: application/json
+
+{
+    "description": "Extract characters, remove original document",
+    "processors": [
+        {
+            "attachment": {
+                "field": "fileContent"
+            }
+        }
+    ]
+}
+
+
+### Get information on my custom pipeline
+GET {{baseUrl}}/_ingest/pipeline/my-custom-pipeline
+
+
+### Remove index
+DELETE {{baseUrl}}/{{myIndex}}
+
+
+### Close the index, require when updating settings
+POST {{baseUrl}}/{{myIndex}}/_close?wait_for_active_shards=0
+
+
+### Configure stop analyzer to use french
+PUT {{baseUrl}}/{{myIndex}}
+Content-Type: application/json
+
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "my_french_stop_analyzer": {
+                    "type": "stop",
+                    "stopwords": "_french_"
+                }
+            }
+        }
+    }
+}
+
+
+### Configure analyzer with synonym and stop words
+PUT {{baseUrl}}/{{myIndex}}
+Content-Type: application/json
+
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "my_custom_analyzer": {
+                    "tokenizer": "standard",
+                    "filter": [ "french_stop", "synonym" ]
+                }
+            },
+            "filter": {
+                "french_stop": {
+                    "type": "stop",
+                    "stopwords": "_french"
+                },
+                "synonym": {
+                    "type": "synonym",
+                    "synonyms": [
+                        "ordure, ordures, vidange, vidanges"
+                    ]
+                }
+            }
+        }
+    }
+} 
+
+
+### Close the index, require when updating settings
+POST {{baseUrl}}/{{myIndex}}/_close?wait_for_active_shards=0
+
+
+### Open the index
+POST {{baseUrl}}/{{myIndex}}/_open
+
+
+### Analyze without analyzer
+POST {{baseUrl}}/{{myIndex}}/_analyze
+Content-Type: application/json
+
+{
+    "text": "Salut les amis comment allez-vous aujourd'hui? Il est temps de bien indexer les règlements."
+}
+
+
+### Stop french analyzer
+POST {{baseUrl}}/{{myIndex}}/_analyze
+Content-Type: application/json
+
+{
+    "analyzer": "my_french_stop_analyzer",
+    "text": "Salut les amis comment allez-vous aujourd'hui? Il est temps de bien indexer les règlements."
+}
+
+### Custom analyzer
+POST {{baseUrl}}/{{myIndex}}/_analyze
+Content-Type: application/json
+
+{
+    "analyzer": "my_custom_analyzer",
+    "text": "Règlement sur les ordures"
+}
+
+### Information on indexes
+GET {{baseUrl}}/_cat/indices?v&pretty
+
+
+### Index stats : Document count
+GET {{baseUrl}}/{{myIndex}}/_count
+
+
+### Get data from the index
+GET {{baseUrl}}/{{myIndex}}/_doc/a
+
+
+### Put data to the index
+@docId = abc123
+PUT {{baseUrl}}/{{myIndex}}/_doc/{{docId}}?pipeline=my-custom-pipeline
+Content-type: application/json
+
+{
+    "bylawId": "{{docId}}",
+    "fileContent": ""
+}
+
+
+### Remove data from index
+DELETE {{baseUrl}}/{{myIndex}}/_doc/a
+
+
+### Search v1
+POST {{baseUrl}}/{{myIndex}}/_search?q=ordures
+Content-Type: application/json
+
+{
+    "_source": {
+        "excludes": ["attachment.content", "fileContent"]
+    }
+}
+
+
+### Search v2
+POST {{baseUrl}}/{{myIndex}}/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "match": {
+            "attachment.content": {
+                "query": "ordures"
+            }
+        }
+    },
+    "_source": {
+        "excludes": ["attachment.content", "fileContent"]
+    }
+}
+
+
+### Search with synonyms
+POST {{baseUrl}}/{{myIndex}}/_search?q=vidange
+Content-Type: application/json
+
+{
+    "_source": {
+        "excludes": ["attachment.content", "fileContent"]
+    }
+}
+
+### Search with synonyms v2
+POST {{baseUrl}}/{{myIndex}}/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "match": {
+            "attachment.content": {
+                "query": "vidange",
+                "analyzer": "my_custom_analyzer"
+            }
+        }
+    },
+    "_source": {
+        "excludes": ["attachment.content", "fileContent"]
+    }
+}
