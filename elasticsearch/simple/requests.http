@@ -4,6 +4,10 @@
 @myIndex = bylaws
 
 
+## Get elastic version
+GET {{baseUrl}}
+
+
 ### Check for plugin installed
 GET {{baseUrl}}/_cat/plugins
 
@@ -70,7 +74,7 @@ Content-Type: application/json
             "filter": {
                 "french_stop": {
                     "type": "stop",
-                    "stopwords": "_french"
+                    "stopwords": "_french_"
                 },
                 "synonym": {
                     "type": "synonym",
@@ -97,7 +101,7 @@ POST {{baseUrl}}/{{myIndex}}/_analyze
 Content-Type: application/json
 
 {
-    "text": "Salut les amis comment allez-vous aujourd'hui? Il est temps de bien indexer les règlements."
+    "text": "Règlement sur les ordures"
 }
 
 
@@ -165,7 +169,7 @@ Content-Type: application/json
     "query": {
         "match": {
             "attachment.content": {
-                "query": "ordures"
+                "query": "vidange"
             }
         }
     },
@@ -176,16 +180,6 @@ Content-Type: application/json
 
 
 ### Search with synonyms
-POST {{baseUrl}}/{{myIndex}}/_search?q=vidange
-Content-Type: application/json
-
-{
-    "_source": {
-        "excludes": ["attachment.content", "fileContent"]
-    }
-}
-
-### Search with synonyms v2
 POST {{baseUrl}}/{{myIndex}}/_search
 Content-Type: application/json
 
@@ -193,12 +187,28 @@ Content-Type: application/json
     "query": {
         "match": {
             "attachment.content": {
-                "query": "vidange",
+                "query": "vidanges",
                 "analyzer": "my_custom_analyzer"
             }
         }
     },
     "_source": {
         "excludes": ["attachment.content", "fileContent"]
+    }
+}
+
+
+### Search with synonyms
+POST {{baseUrl}}/{{myIndex}}/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "match": {
+            "attachment.content": {
+                "query": "vidanges",
+                "analyzer": "my_custom_analyzer"
+            }
+        }
     }
 }
