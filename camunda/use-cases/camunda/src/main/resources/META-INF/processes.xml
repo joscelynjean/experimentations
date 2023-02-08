@@ -1,0 +1,18 @@
+<process-application
+  xmlns="http://www.camunda.org/schema/1.0/ProcessApplication"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- @see https://docs.camunda.org/manual/7.16/reference/deployment-descriptors/tags/process-archive/ -->
+  <!--
+  <process-archive>
+    <resource>xxx.bpmn</resource>
+    <properties>
+      <property name="isDeleteUponUndeploy">false</property>
+      <property name="isScanForProcessDefinitions">false</property>
+      <property name="isResumePreviousVersions">false</property>
+      <property name="isDeployChangedOnly">false</property>
+    </properties>
+  </process-archive>
+  -->
+
+</process-application>

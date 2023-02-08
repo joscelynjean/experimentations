@@ -1,0 +1,10 @@
+@camundaRestEngine = http://localhost:8080/engine-rest
+@camundaUsername = demo
+@camundaPassword = demo
+
+# 4000 char limit use case
+POST {{camundaRestEngine}}/process-definition/key/char-limit/start
+Authorization: basic {{camundaUsername}} {{camundaPassword}}
+content-type: application/json
+
+{}

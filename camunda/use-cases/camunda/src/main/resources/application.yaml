@@ -1,0 +1,145 @@
+#
+# This is the configuration for Camunda
+# For more information, see https://docs.camunda.org/manual/7.16/user-guide/spring-boot-integration/configuration/
+#
+
+# For more information on properties
+# @see https://docs.camunda.org/manual/7.16/user-guide/spring-boot-integration/configuration/#camunda-engine-properties
+camunda:
+  bpm:
+    # authorization:
+    admin-user:
+      id: demo
+      password: demo
+      firstName: demo
+      
+    enabled: true
+    # process-engine-name: default
+    generate-unique-process-engine-name: false
+    generate-unique-process-application-name: false
+    default-serialization-format: application/json
+    history-level: AUDIT
+    history-level-default: AUDIT
+    # Will use what is configured in processes.xml
+    auto-deployment-enable: true
+    default-number-of-retries: 3
+    job-executor-acquire-by-priority: false
+    # license-file:
+    id-generator: strong
+    # deployment-resource-pattern
+
+    job-execution:
+      enabled: true
+      deployment-aware: false
+      core-pool-size: 5
+      keep-alive-seconds: 0
+      lock-time-in-millis: 60000
+      max-jobs-per-acquisition: 20
+      max-pool-size: 10
+      queue-capacity: 30
+      # wait time of the job acquisition thread in milliseconds in case there are less jobs available for execution than requested during acquisition
+      wait-time-in-millis: 1000
+      # maximum wait time of the job acquisition thread in milliseconds in case there are less jobs available for execution than requested during acquisition
+      max-wait: 1000
+      backoff-time-in-millis: 0
+      max-backoff: 0
+      backoff-decrease-threshold: 100
+      wait-increase-factor: 2
+
+    database:
+      schema-update: true
+      type: postgres
+      # table-prefix
+      # schema-name
+      jdbc-batch-processing: true
+
+    eventing:
+      execution: true
+      history: true
+      task: true
+
+    jpa:
+      enable: true
+      # persistence-unit-name
+      close-entity-manager: true
+      handle-transaction: true
+
+    management:
+      health:
+        camunda:
+          enabled: true
+
+    metrics:
+      enabled: true
+      db-reporter-activate: true
+
+    webapp:
+      enabled: true
+      index-redirect-enabled: true
+      # csrf:
+      # header-security:
+
+    filter:
+      create: All
+
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    enable:
+      jvm: true
+      hikaricp: true
+      process: true
+      logback: false
+      tomcat: true
+      system: false
+      jdbc: true
+      http: true
+
+spring:
+  application:
+    name: camunda-engine
+  # @see https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.sql.datasource.configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: test
+    password: test
+    driver-class-name: org.postgresql.Driver
+    # @see https://github.com/brettwooldridge/HikariCP
+    hikari:
+      connectionTimeout: 30000
+      maximumPoolSize: 3
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: false
+  # main:
+  # allow-bean-definition-overriding: true
+
+logging:
+  level:
+    root: ERROR
+    org.camunda.bpm: INFO
+    org.camunda.connect: ERROR
+    ca.montreal.sai.camunda: ERROR
+    ca.montreal.sai.camunda.security: ERROR
+    org.springframework: ERROR
+    org.camunda.bpm.engine.impl.persistence.entity.JobEntity.level: ERROR
+    org.camunda.bpm.engine.jobexecutor.level: ERROR
+    org.camunda.bpm.engine.cmd.level: ERROR
